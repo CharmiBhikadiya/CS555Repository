@@ -1,0 +1,9 @@
+difference between two child should be greater than 8 month or less than 2 days
+
+Parse Tree should not be null
+
+Birthdate is not Null
+
+BirthTime of child1 and child 2 should be different
+
+Birthdate Format should be same
