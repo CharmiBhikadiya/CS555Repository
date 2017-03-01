@@ -1,4 +1,5 @@
 package gedcomParser;
+import java.beans.FeatureDescriptor;
 /*
  * Team submission:
  * 
@@ -9,6 +10,7 @@ package gedcomParser;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.util.Calendar;
 
 public class gedcomParser {
 	
@@ -376,11 +378,27 @@ public class gedcomParser {
 		for(int j=0;j<errorsFamily.size();j++){
 			System.out.println(errorsFamily.get(j));
 		}
-		
+		//Priya Parmar - User Story 03 - Sprint 1
 		ArrayList<String> errorsIndiBirth = checkBirthBeforeDeath(indArray);
 		for(int j=0;j<errorsIndiBirth.size();j++){
 			System.out.println(errorsIndiBirth.get(j));
 		}
+		//Ruchika Sutariya - User Story 02 - Sprint 1
+		ArrayList<String> errorsBirthBeforeMrg = checkBirthBeforeMarriage(indArray, famArray);
+		for(int j=0;j<errorsBirthBeforeMrg.size();j++){
+			System.out.println(errorsBirthBeforeMrg.get(j));
+		}
+		//Ruchika Sutariya  - User Story 09 - Sprint 1
+		ArrayList<String> errorsBirthBeforeDeathOfParents = checkBirthBeforeDeathofParents(indArray, famArray);
+		for(int j=0;j<errorsBirthBeforeDeathOfParents.size();j++){
+			System.out.println(errorsBirthBeforeDeathOfParents.get(j));
+		}
+		//Charmi Bhikadiya -User Story 13 - Sprint 1
+		ArrayList<String> errorsSiblingSpacing = compareSiblingSpacing(indArray,famArray);
+		for(int j=0;j<errorsSiblingSpacing.size();j++){
+			System.out.println(errorsSiblingSpacing.get(j));
+		}
+		//Charmi Bhikadiya - User Story 16 - Sprint 1
 		ArrayList<String> errorsMaleNames = checkMaleLastNames(indArray, famArray);
 		for(int j=0;j<errorsMaleNames.size();j++){
 			System.out.println(errorsMaleNames.get(j));
@@ -434,8 +452,97 @@ public class gedcomParser {
 		return errors;
 		
 	}
+	//Priya Parmar - UserStory 03 : Birth Before Death 
+	public static ArrayList<String> checkBirthBeforeDeath(ArrayList<indi> indArray){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		ArrayList<String> errors = new ArrayList<String>();
+		for (int j=0; j < indArray.size(); j++) {
+            indi currentspot = indArray.get(j);
+            Date birth = currentspot.getBirth();
+            Date death = currentspot.getDeath(); 
+            if(death != null && birth != null && death.before(birth)){
+            	//System.out.println("Error US03: INDIVIDUAL: " + currentspot.getId()
+            	//+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth));
+            	errors.add("Error US03: INDIVIDUAL: " + currentspot.getId()+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth)) ;
+            }
+        }
+		return errors;
+	}
+	//Ruchika Sutariya - User Story 02: Birth before marriage
+	public static ArrayList<String> checkBirthBeforeMarriage(ArrayList<indi> indArray,ArrayList<fam> famArray){
+		ArrayList<String> errors = new ArrayList<String>();
+		for(int fam=0;fam<famArray.size();fam++){
+			fam currentfam = famArray.get(fam);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			Date marriage = currentfam.getMarriage();
+			String husband = currentfam.getHusband(); 
+			String wife = currentfam.getWife(); 
+			Date hbirth = getBirthDeath(husband, indArray).get(0);
+			Date wbirth = getBirthDeath(wife, indArray).get(0);
+			String error = ""; 
+			if(hbirth != null && marriage != null && hbirth.after(marriage)){
+				errors.add("Error US02: FAMILY: " + currentfam.getId() 
+				+ ": Married " + dateFormat.format(marriage)
+	        	+ " before husband's("+husband+") birth on " + dateFormat.format(hbirth)+"\n");
+			}
+			if(wbirth != null && marriage != null && wbirth.after(marriage)){
+				errors.add("Error US02: FAMILY: " + currentfam.getId() 
+				+ ": Married " + dateFormat.format(marriage)
+	        	+ " before wife's("+wife+") birth on " + dateFormat.format(wbirth));
+			}
+		}
+		
+		return errors;
+	}
+	//Ruchika Sutariya - User Story 09 - Sprint 1 
+	@SuppressWarnings("deprecation")
+	public static ArrayList<String> checkBirthBeforeDeathofParents(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		ArrayList<String> errors = new ArrayList<String>();
+		for(int i=0;i<famArray.size();i++){
+			fam currentFamiliy = famArray.get(i);
+			String fatherName = currentFamiliy.getHusband();
+			String motherName = currentFamiliy.getWife();
+			ArrayList<String> children = new ArrayList<String>();
+			Date fatherDeath = getDeathDate(fatherName,indArray);
+			Date deathMinusNineMonths =null;
+			if(fatherDeath!=null){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(fatherDeath);
+				cal.add(Calendar.MONTH,-9);
+				deathMinusNineMonths = cal.getTime();
+			}
+			
+			//fatherDeath.setMonth((fatherDeath.getMonth() - 1 -9) % 12 + 1);;
+			Date motherDeath = getDeathDate(motherName, indArray);
+			for(int j=0;j<children.size();j++){
+				String currentChildId = children.get(j);
+				Date currentChildBirth = getBirthDeath(currentChildId, indArray).get(0);
+				if(fatherDeath!=null){
+					if(currentChildBirth.after(deathMinusNineMonths)){
+						errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is before nine months after death of father");
+					}
+				}else if(motherDeath!=null){
+					if(currentChildBirth.after(motherDeath)){
+						errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is after death of mother");
+					}
+				}else{
+					continue;
+				}
+			}
+		}
+		return errors;
+	}
+	public static Date getDeathDate(String name, ArrayList<indi> indArray){
+		for(int i=0;i<indArray.size();i++){
+			indi currentIndi = indArray.get(i);
+			if(currentIndi.getName().equals(name)){
+				return currentIndi.getDeath();
+			}
+		}
+		return null;
+	}
 	
-	//User Story 16 : Male Members lastnames
+	//Charmi Bhikadiya - User Story 16 : Male Members lastnames
 	public static ArrayList<String> checkMaleLastNames(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		ArrayList<String> errors = new ArrayList<String>();
 		for(int i=0;i<famArray.size();i++){
@@ -476,119 +583,98 @@ public class gedcomParser {
 		}
 		return -1;
 	}
-	//US13:Sibling Spacing
-		public static boolean siblingspacing(fam family, ArrayList<indi> individualArray){
-			System.out.println(family.getChildren());
-			if(family.getChildren().size() == 1){
-				System.out.println("Only one member - No need to check");
-				return true;
-			}
-			for(int i = 0;i< family.getChildren().size();i++){
-				for(int j = i+1;j< family.getChildren().size();j++){
-					indi child1;
-					indi child2;
-					if(getIndexOfChild(family.getChildren().get(i),individualArray) != -1){
-						child1 = individualArray.get(getIndexOfChild(family.getChildren().get(i),individualArray)); 
-					} else{
-						System.out.println("Child 1 is not Found: "+getIndexOfChild(family.getChildren().get(i),individualArray));
-						return false;
-					}
-					if(getIndexOfChild(family.getChildren().get(j),individualArray) != -1){
-						child2 = individualArray.get(getIndexOfChild(family.getChildren().get(j),individualArray)); 
-					} else{
-						System.out.println("Child 2 is not Found: "+getIndexOfChild(family.getChildren().get(j),individualArray));
-						return false;
-					}
-					Date childBirthday1 = child1.getBirth();
-					Date childBirthday2 = child2.getBirth();
-					long chiltime1 = childBirthday1.getTime();
-					long chiltime2 = childBirthday2.getTime();
-					long diffTime = Math.abs(chiltime2 - chiltime1);
-					long diffDays = diffTime / (1000 * 60 * 60 * 24);
-					if(diffDays < 2 || diffDays > 243){
-						System.out.println("They are sibilings" + diffDays);
-						continue;
-					}
-					else{
-						System.out.println("They are not a sibilings" + diffDays);
-						return false;
-					}
-				}
-			}
-			return true;
+	//Charmi Bhikadiya - User Story 13:Sibling Spacing
+	private class dateAndId {            //class to help get 2 array of Id and birth date for children
+		String Id;
+		Date date;
+		
+		private dateAndId (String Id, Date date) {
+			this.Id = Id;
+			this.date = date;
 		}
-		public static int getIndexOfFamily(String SpouseID, ArrayList<fam> familyArray) {
-			for (int i = 0; i < familyArray.size(); i++) {
-				fam fam2 = familyArray.get(i);
-				if (fam2.getId().equals(SpouseID)) {
-					return i;
-				}
-			}
-			return -1;
-		}
-		public static int getIndexOfFamilyID(String familyID, ArrayList<fam> familyArray) {
-			for (int i = 0; i < familyArray.size(); i++) {
-				fam fam4 = familyArray.get(i);
-				if (fam4.getId().equals(familyID)) {
-					return i;
-				}
-			}
-			return -1;
-		}
-		public static Boolean mrgDateChecker(ArrayList<indi> individualArray, ArrayList<fam> familyArray) {
-			for (int k = 0; k < individualArray.size(); k++) {
-				Date husbandDate = individualArray.get(k).getBirth();
-				if (individualArray.get(k).getFams().size() == 0) {
-					System.out.println("Single Person - No need to check");
-					continue;
-				}
-				for (int i = 0; i < individualArray.get(k).getFams().size(); i++) {
-					String spouse = individualArray.get(k).getFams().get(i);
-					if(getIndexOfFamily(spouse, familyArray) != -1){
-						fam spouseFam = familyArray.get(getIndexOfFamily(spouse,familyArray));
-						Date merrageDate = spouseFam.getMarriage();
-						if(husbandDate != null && merrageDate != null){
-							long husbandDateLong = husbandDate.getTime();
-							long merrageDateLong = merrageDate.getTime();
-							long diffTime = merrageDateLong - husbandDateLong;
-							//System.out.println(diffTime);
-							if (diffTime < 0) {
-								System.out.println("This is invalid - Marrage date is before birthdate");
-								continue;
-							} else {
-								System.out.println("This is valid");
-							}
-						}
-						else{
-							System.out.println("One of the date is not available");
-						}
-					}
-					else {
-						System.out.println("Spouse is not Found: ");
-					}
-				}
-				
-			}
-			return true;
-		}
-	//UserStory 03 : Birth Before Death 
-	public static ArrayList<String> checkBirthBeforeDeath(ArrayList<indi> indArray){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		
+		private Date getDate() { return this.date; }
+		
+		private String getId() { return this.Id; }
+	}
+	
+	public static ArrayList<String> compareSiblingSpacing(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error = "";
+		fam famspot = null;
+		indi currentspot = null;
 		ArrayList<String> errors = new ArrayList<String>();
-		for (int j=0; j < indArray.size(); j++) {
-            indi currentspot = indArray.get(j);
-            Date birth = currentspot.getBirth();
-            Date death = currentspot.getDeath(); 
-            if(death != null && birth != null && death.before(birth)){
-            	//System.out.println("Error US03: INDIVIDUAL: " + currentspot.getId()
-            	//+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth));
-            	errors.add("Error US03: INDIVIDUAL: " + currentspot.getId()+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth)) ;
-            }
-        }
+		ArrayList<dateAndId> siblingBirthDates = new ArrayList<>();
+		for (fam famArray1 : famArray){
+			famspot = famArray1;
+			for (indi indArray1 : indArray){
+				 currentspot = indArray1;
+                 String spot = currentspot.getId();
+                 ArrayList<String> children = famspot.getChildren();
+                 if (children.contains(spot) && currentspot.getBirth() != null) {
+            		siblingBirthDates.add(new gedcomParser().new dateAndId(currentspot.getId(), currentspot.getBirth()));	
+                }
+			}
+		}
+			
+		for (dateAndId sibling1 : siblingBirthDates) {
+			for (dateAndId sibling2 : siblingBirthDates) {
+				long diff = Math.abs(sibling1.getDate().getTime() - sibling2.getDate().getTime());
+				long Hours = diff / (60 * 60 * 1000);
+		            long diffDays = Hours / 24;
+		            long diffMonths = diffDays / 30;
+		            
+		            //System.out.println(sibling1.getId() + " " + sibling2.getId());
+		            //System.out.println(sibling1.getDate() + " " + sibling2.getDate());
+		            
+		            if (diffDays > 2  && sibling1.getId() != sibling2.getId()){
+		            	//errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays more than 2 days apart");		            
+		            	}
+		            if (diffMonths < 9 && sibling1.getId() != sibling2.getId()){
+		            	errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays less than 9 months apart");		            }
+			}
+		}
+		
 		return errors;
+	}
+	public static int getIndexOfFamily(String SpouseID, ArrayList<fam> familyArray) {
+		for (int i = 0; i < familyArray.size(); i++) {
+			fam fam2 = familyArray.get(i);
+			if (fam2.getId().equals(SpouseID)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	public static int getIndexOfFamilyID(String familyID, ArrayList<fam> familyArray) {
+		for (int i = 0; i < familyArray.size(); i++) {
+			fam fam4 = familyArray.get(i);
+			if (fam4.getId().equals(familyID)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public static ArrayList<Date> getBirthDeath(String id, ArrayList<indi> indArray){
+		ArrayList<Date> BirthDeath = new ArrayList<Date>();
+		Date yourdeath = null;
+		Date yourbirth = null;
+		for(int i=0; i<indArray.size(); i++){
+			indi currentspot = indArray.get(i);
+			String current_id = currentspot.getId();
+			if(current_id.equals(id)){
+				yourdeath= currentspot.getDeath(); 
+				yourbirth = currentspot.getBirth(); 
+			}
+		}
+		BirthDeath.add(yourbirth);
+		BirthDeath.add(yourdeath);
+		return BirthDeath; 
 	}
 	
 	
+
+
 	public static String getName(String id, ArrayList<indi> indArray){
 		String yourname = "";
 		for(int i=0; i<indArray.size(); i++){
@@ -606,10 +692,9 @@ public class gedcomParser {
 		ArrayList<fam> familyArray = new ArrayList<fam>();
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
-		//String file = in.nextLine();
-		//in.close();
-		//parseFile(file, individualArray, familyArray);
-		parseFile("D:\\Stevens\\Semester 3\\Agile\\week 3\\Project3\\Project3.ged", individualArray, familyArray);
+		String file = in.nextLine();
+		in.close();
+		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
 	}
 }
