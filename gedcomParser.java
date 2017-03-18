@@ -741,6 +741,64 @@ public class gedcomParser {
 		return errors;
 	}
 	
+	//Sprint 2 - Ruchika Sutariya -US 18 - Siblings should not marry one another
+	public static void SiblingShouldnotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		
+		for(int i=0;i<famArray.size();i++){
+			ArrayList<String> children = famArray.get(i).getChildren();
+			
+			if(famArray.get(i).getChildren()!=null)
+			{
+				String familyID=famArray.get(i).getId();
+				
+				if(children.size()>=2)
+				{
+					indi husband = getIndividualById(famArray.get(i).getHusband(), indArray);
+					indi wife = getIndividualById(famArray.get(i).getWife(),indArray);
+					String mothername=wife.getName();
+					String fathername=husband.getName();
+					
+					
+				System.out.println(children+" are Siblings who has same mother" + mothername + "and father" + fathername + "so they should not marry with each other.");
+				
+				}
+				else
+					System.out.println("There is only one child");
+				
+			}
+		}
+	}
+
+	//Sprint 2 - Ruchika Sutariya -US 17 - Parents should not marry any of their descendants
+public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	for(int i=0;i<famArray.size();i++)
+	{
+		
+		Date marriagedate1=famArray.get(i).getMarriage();
+		//System.out.println(marriagedate1);
+		
+		for(int j=i+1;j<famArray.size();j++)
+		{
+			Date marriagedate2=famArray.get(j).getMarriage();
+			//System.out.println(marriagedate2);
+			 if(marriagedate1!=null && marriagedate2!=null)
+			 if(marriagedate1.before(marriagedate2))
+			 {
+				 String familyID1=famArray.get(j).getId();
+				 String familyID=famArray.get(i).getId();
+				 System.out.println(familyID+" should not marry to descendant"+familyID1);
+			 }
+			 
+			
+		}
+		
+	}
+	
+}
+	
+	
+	
+	
 	//Sprint 2 - Charmi Bhikadiya - US 28 - Order Siblings by age
 	public static void orderSiblingsByAge(ArrayList<fam> famArray, ArrayList<indi> indArray){
 		
