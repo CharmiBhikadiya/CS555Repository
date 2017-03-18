@@ -385,6 +385,138 @@ public class gedcomParser {
 		}
 		return yourname; 
 	}
+	//Sprint 1 - Ruchika Sutariya - User Story 02: Birth before marriage
+	public static ArrayList<String> checkBirthBeforeMarriage(ArrayList<indi> indArray,ArrayList<fam> famArray){
+		ArrayList<String> errors = new ArrayList<String>();
+		for(int fam=0;fam<famArray.size();fam++){
+			fam currentfam = famArray.get(fam);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+			Date marriage = currentfam.getMarriage();
+			String husband = currentfam.getHusband(); 
+			String wife = currentfam.getWife(); 
+			Date hbirth = getBirthDeath(husband, indArray).get(0);
+			Date wbirth = getBirthDeath(wife, indArray).get(0);
+			String error = ""; 
+			if(hbirth != null && marriage != null && hbirth.after(marriage)){
+				errors.add("Error US02: FAMILY: " + currentfam.getId() 
+				+ ": Married " + dateFormat.format(marriage)
+	        	+ " before husband's("+husband+") birth on " + dateFormat.format(hbirth)+"\n");
+			}
+			if(wbirth != null && marriage != null && wbirth.after(marriage)){
+				errors.add("Error US02: FAMILY: " + currentfam.getId() 
+				+ ": Married " + dateFormat.format(marriage)
+	        	+ " before wife's("+wife+") birth on " + dateFormat.format(wbirth));
+			}
+		}
+		
+		return errors;
+	}
+	//Sprint 1 - Ruchika Sutariya - User Story 09 
+	@SuppressWarnings("deprecation")
+	public static ArrayList<String> checkBirthBeforeDeathofParents(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		ArrayList<String> errors = new ArrayList<String>();
+		for(int i=0;i<famArray.size();i++){
+			fam currentFamiliy = famArray.get(i);
+			String fatherName = currentFamiliy.getHusband();
+			String motherName = currentFamiliy.getWife();
+			ArrayList<String> children = new ArrayList<String>();
+			Date fatherDeath = getDeathDate(fatherName,indArray);
+			Date deathMinusNineMonths =null;
+			if(fatherDeath!=null){
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(fatherDeath);
+				cal.add(Calendar.MONTH,-9);
+				deathMinusNineMonths = cal.getTime();
+			}
+			
+			//fatherDeath.setMonth((fatherDeath.getMonth() - 1 -9) % 12 + 1);;
+			Date motherDeath = getDeathDate(motherName, indArray);
+			for(int j=0;j<children.size();j++){
+				String currentChildId = children.get(j);
+				Date currentChildBirth = getBirthDeath(currentChildId, indArray).get(0);
+				if(fatherDeath!=null){
+					if(currentChildBirth.after(deathMinusNineMonths)){
+						errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is before nine months after death of father");
+					}
+				}else if(motherDeath!=null){
+					if(currentChildBirth.after(motherDeath)){
+						errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is after death of mother");
+					}
+				}else{
+					continue;
+				}
+			}
+		}
+		return errors;
+	}
+	
+	
+	//Sprint 2 - Ruchika Sutariya -US 17 - Parents should not marry any of their descendants
+	public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	for(int i=0;i<famArray.size();i++)
+	{
+		
+		Date marriagedate1=famArray.get(i).getMarriage();
+		//System.out.println(marriagedate1);
+		
+		for(int j=i+1;j<famArray.size();j++)
+		{
+			Date marriagedate2=famArray.get(j).getMarriage();
+			//System.out.println(marriagedate2);
+			 if(marriagedate1!=null && marriagedate2!=null)
+			 if(marriagedate1.before(marriagedate2))
+			 {
+				 String familyID1=famArray.get(j).getId();
+				 String familyID=famArray.get(i).getId();
+				 System.out.println(familyID+" should not marry to descendant"+familyID1);
+			 }
+			 
+			
+		}
+		
+	}
+	
+}
+	
+	//Sprint 2 - Ruchika Sutariya -US 18 - Siblings should not marry one another
+	public static void SiblingShouldnotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		
+		for(int i=0;i<famArray.size();i++){
+			ArrayList<String> children = famArray.get(i).getChildren();
+			
+			if(famArray.get(i).getChildren()!=null)
+			{
+				String familyID=famArray.get(i).getId();
+				
+				if(children.size()>=2)
+				{
+					indi husband = getIndividualById(famArray.get(i).getHusband(), indArray);
+					indi wife = getIndividualById(famArray.get(i).getWife(),indArray);
+					String mothername=wife.getName();
+					String fathername=husband.getName();
+					
+					
+				System.out.println(children+" are Siblings who has same mother" + mothername + "and father" + fathername + "so they should not marry with each other.");
+				
+				}
+				else
+					System.out.println("There is only one child");
+				
+			}
+		}
+	}
+
+	
+	
+	public static Date getDeathDate(String name, ArrayList<indi> indArray){
+		for(int i=0;i<indArray.size();i++){
+			indi currentIndi = indArray.get(i);
+			if(currentIndi.getName().equals(name)){
+				return currentIndi.getDeath();
+			}
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) throws IOException{
 		ArrayList<indi> individualArray = new ArrayList<indi>();
