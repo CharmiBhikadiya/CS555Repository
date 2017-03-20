@@ -452,32 +452,38 @@ public class gedcomParser {
 	
 	
 	//Sprint 2 - Ruchika Sutariya -US 17 - Parents should not marry any of their descendants
-	public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
+public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	ArrayList<String> errors = new ArrayList<String>();
 	for(int i=0;i<famArray.size();i++)
-	{
-		
-		Date marriagedate1=famArray.get(i).getMarriage();
-		//System.out.println(marriagedate1);
-		
-		for(int j=i+1;j<famArray.size();j++)
-		{
-			Date marriagedate2=famArray.get(j).getMarriage();
-			//System.out.println(marriagedate2);
-			 if(marriagedate1!=null && marriagedate2!=null)
-			 if(marriagedate1.before(marriagedate2))
-			 {
-				 String familyID1=famArray.get(j).getId();
+	{ 
+				
 				 String familyID=famArray.get(i).getId();
-				 System.out.println(familyID+" should not marry to descendant"+familyID1);
-			 }
-			 
-			
-		}
-		
+				 
+				 for(i=0;i<indArray.size();i++)
+				 {
+					 String Child = indArray.get(i).getFamc();
+					 if(!Child.equals(null))
+					 {
+						 if(Child.equals(familyID))
+						 {
+						 
+							 String indiID = indArray.get(i).getId();
+							 System.out.println(familyID+"should not marry to descendent"+indiID);
+							 errors.add("Error US17: FAMILY:"+familyID+"should not marry to descendent INDIVIDUAL:"+ indiID);
+						 }
+					 } 
+					 
+					 else 
+					 {
+						 System.out.println("Individual has no parents");
+					 }
+					 
+				 }
+				
+				 
 	}
 	
-}
-	
+}	
 	//Sprint 2 - Ruchika Sutariya -US 18 - Siblings should not marry one another
 	public static void SiblingShouldnotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		
