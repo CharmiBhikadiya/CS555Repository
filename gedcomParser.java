@@ -795,8 +795,55 @@ public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<f
 	}
 	
 }
+	// Sprint 2 - Charmi Bhikadiya - US 19 - First Cousins should not marry
+	public static void CousinShouldNotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	String lastName1="";
+	String lastName2="";
+	System.out.println("These all are cousins of Same Family so should not be marry with each other.");
+	for(int i=0;i<indArray.size();i++){
+		String indiID=indArray.get(i).getId();
+		//lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+		//System.out.println(indiID +" "+ lastName);	
+		System.out.println(indArray.get(i).getId());
+		for(i=0;i<indArray.size();i++)
+		{
+			lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+			
+			for(int j=i+1;j<indArray.size();j++)
+			{
+				lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+				
+				if(lastName2.equals(lastName1))
+				{
+					
+					indiID=indArray.get(j).getId();
+					System.out.println(indiID);
+				}
+				
+					
+			}
+			break;
+		}
+		System.out.println("These all are cousins of Same Family so should not be marry with each other.");
+		
+				for(int j=i+1;j<indArray.size();j++)
+				{
+					//System.out.println(lastName1);
+					lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+					//System.out.println(lastName2);
+					if(!lastName1.equals(lastName2))
+					{
+						indiID=indArray.get(j).getId();
+						System.out.println(indiID);
+					}
+					
+				}
+				break;
+			
+		}
 	
-	
+		
+}
 	
 	
 	//Sprint 2 - Charmi Bhikadiya - US 28 - Order Siblings by age
