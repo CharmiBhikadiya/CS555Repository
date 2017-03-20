@@ -465,6 +465,173 @@ public class gedcomParser {
 		}
 		return -1;
 	}
+	//Sprint 1 - Charmi Bhikadiya - User Story 16 : Male Members lastnames
+	public static ArrayList<String> checkMaleLastNames(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		ArrayList<String> errors = new ArrayList<String>();
+		for(int i=0;i<famArray.size();i++){
+			String husbandId = famArray.get(i).getHusband();
+			String lastName="";
+			ArrayList<String> children = new ArrayList<String>();
+			children = famArray.get(i).getChildren();
+			for(int j=0;j<indArray.size();j++){
+				if(indArray.get(j).getId().equals(husbandId)){
+					lastName=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+					break;
+					//System.out.println(lastName);
+				}
+			}
+			for(int j=0;j<children.size();j++){
+				for(int k=0;k<indArray.size();k++){
+					if(children.get(j).equals(indArray.get(k).getId())){
+						String sex = indArray.get(k).getSex();
+						String indiName = indArray.get(k).getName();
+						String indiLName = indiName.substring(indiName.indexOf("/")+1,indiName.length()-2);
+						if(!lastName.equals(indiLName)
+								&& indArray.get(k).getSex().equals("M")){
+							errors.add("Error US16: FAMILY:"+famArray.get(i).getId()+" INDIVIDUAL:"+ indArray.get(k).getId()+"The last name of all male members should be "+lastName);
+						}
+					}
+				}
+			}
+			
+		}
+		return errors;
+	}
+	public static int getIndexOfChild(String ChildID, ArrayList<indi> individualArray){
+		for(int i = 0; i< individualArray.size();i++){
+			indi child = individualArray.get(i);
+			if(child.getId().equals(ChildID)){
+				return i;
+			}
+		}
+		return -1;
+	}
+	//Sprint 1 - Charmi Bhikadiya - User Story 13:Sibling Spacing
+	private class dateAndId {            //class to help get 2 array of Id and birth date for children
+		String Id;
+		Date date;
+		
+		private dateAndId (String Id, Date date) {
+			this.Id = Id;
+			this.date = date;
+		}
+		
+		private Date getDate() { return this.date; }
+		
+		private String getId() { return this.Id; }
+	}
+	
+	public static ArrayList<String> compareSiblingSpacing(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error = "";
+		fam famspot = null;
+		indi currentspot = null;
+		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<dateAndId> siblingBirthDates = new ArrayList<>();
+		for (fam famArray1 : famArray){
+			famspot = famArray1;
+			for (indi indArray1 : indArray){
+				 currentspot = indArray1;
+                 String spot = currentspot.getId();
+                 ArrayList<String> children = famspot.getChildren();
+                 if (children.contains(spot) && currentspot.getBirth() != null) {
+            		siblingBirthDates.add(new gedcomParser().new dateAndId(currentspot.getId(), currentspot.getBirth()));	
+                }
+			}
+		}
+			
+		for (dateAndId sibling1 : siblingBirthDates) {
+			for (dateAndId sibling2 : siblingBirthDates) {
+				long diff = Math.abs(sibling1.getDate().getTime() - sibling2.getDate().getTime());
+				long Hours = diff / (60 * 60 * 1000);
+		            long diffDays = Hours / 24;
+		            long diffMonths = diffDays / 30;
+		            
+		            //System.out.println(sibling1.getId() + " " + sibling2.getId());
+		            //System.out.println(sibling1.getDate() + " " + sibling2.getDate());
+		            
+		            if (diffDays > 2  && sibling1.getId() != sibling2.getId()){
+		            	//errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays more than 2 days apart");		            
+		            	}
+		            if (diffMonths < 9 && sibling1.getId() != sibling2.getId()){
+		            	errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays less than 9 months apart");		            }
+			}
+		}
+		
+		return errors;
+	}
+
+	
+	
+	
+	
+	//Sprint 2 - Charmi Bhikadiya - US 28 - Order Siblings by age
+	public static void orderSiblingsByAge(ArrayList<fam> famArray, ArrayList<indi> indArray){
+		
+		for(int i=0;i<famArray.size();i++){
+			ArrayList<indi> orderedSiblings = new ArrayList<>();
+			ArrayList<String> siblings = famArray.get(i).getChildren();
+			for(int j =0 ;j<siblings.size();j++){
+				orderedSiblings.add(getIndividualById(siblings.get(j), indArray));
+			}
+			gedcomParser ged = new gedcomParser();
+			Collections.sort(orderedSiblings,ged.new AgeComparator());
+			System.out.println("\nSiblings of family "+famArray.get(i).getId()+":");
+			for(int j=0;j<orderedSiblings.size();j++){
+				System.out.println(orderedSiblings.get(j).getName()+"has age "+orderedSiblings.get(j).getAge());
+			}
+		}
+		
+	}
+	
+	// Sprint 2 - Charmi Bhikadiya - US 19 - First Cousins should not marry
+	public static void CousinShouldNotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	String lastName1="";
+	String lastName2="";
+	System.out.println("These all are cousins of Same Family so should not be marry with each other.");
+	for(int i=0;i<indArray.size();i++){
+		String indiID=indArray.get(i).getId();
+		//lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+		//System.out.println(indiID +" "+ lastName);	
+		System.out.println(indArray.get(i).getId());
+		for(i=0;i<indArray.size();i++)
+		{
+			lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+			
+			for(int j=i+1;j<indArray.size();j++)
+			{
+				lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+				
+				if(lastName2.equals(lastName1))
+				{
+					
+					indiID=indArray.get(j).getId();
+					System.out.println(indiID);
+				}
+				
+					
+			}
+			break;
+		}
+		System.out.println("These all are cousins of Same Family so should not be marry with each other.");
+		
+				for(int j=i+1;j<indArray.size();j++)
+				{
+					//System.out.println(lastName1);
+					lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+					//System.out.println(lastName2);
+					if(!lastName1.equals(lastName2))
+					{
+						indiID=indArray.get(j).getId();
+						System.out.println(indiID);
+					}
+					
+				}
+				break;
+			
+		}
+	
+		
+}
 	
 	public static void main(String[] args) throws IOException {
 
