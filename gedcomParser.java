@@ -65,6 +65,7 @@ public class gedcomParser {
 			return family_child; 
 		}
 		public void setFams(String fams){
+			indi_spouse = fams;
 			this.family_spouse.add(fams);
 		}
 		public ArrayList<String> getFams(){
@@ -75,6 +76,10 @@ public class gedcomParser {
 		}
 		public int getAge() {
 	        	return age;
+		}
+		String indi_spouse;
+		public String getFamsp(){	
+			return indi_spouse; 
 		}
 	}
 	class AgeComparator implements Comparator<indi> {
@@ -401,6 +406,7 @@ public class gedcomParser {
 					getName(currentspot.getWife(),indArray), currentspot.getChildren());
 			}
 		}
+		System.out.println("Sprint 1:");
 		//Priya Parmar - User Story 01 - Sprint 1 for individual
 		ArrayList<String> errorsIndividual = checkIndiDateBeforeCurrentDate(indArray);
 		for(int j=0; j<errorsIndividual.size();j++){
@@ -419,9 +425,7 @@ public class gedcomParser {
 		}
 		//Ruchika Sutariya - User Story 02 - Sprint 1
 		ArrayList<String> errorsBirthBeforeMrg = checkBirthBeforeMarriage(indArray, famArray);
-		for(int j=0;j<errorsBirthBeforeMrg.size();j++){
-			System.out.println(errorsBirthBeforeMrg.get(j));
-		}
+		System.out.println(errorsBirthBeforeMrg.get(0));
 		//Ruchika Sutariya  - User Story 09 - Sprint 1
 		ArrayList<String> errorsBirthBeforeDeathOfParents = checkBirthBeforeDeathofParents(indArray, famArray);
 		for(int j=0;j<errorsBirthBeforeDeathOfParents.size();j++){
@@ -429,14 +433,13 @@ public class gedcomParser {
 		}
 		//Charmi Bhikadiya -User Story 13 - Sprint 1
 		ArrayList<String> errorsSiblingSpacing = compareSiblingSpacing(indArray,famArray);
-		for(int j=0;j<errorsSiblingSpacing.size();j++){
-			System.out.println(errorsSiblingSpacing.get(j));
-		}
+		System.out.println(errorsSiblingSpacing.get(0));
 		//Charmi Bhikadiya - User Story 16 - Sprint 1
 		ArrayList<String> errorsMaleNames = checkMaleLastNames(indArray, famArray);
 		for(int j=0;j<errorsMaleNames.size();j++){
 			System.out.println(errorsMaleNames.get(j));
 		}
+		System.out.println("Sprint 2:");
 		//Priya Parmar - User Story 07 - Sprint 2
 		ArrayList<String> errorsOver150 = checkIfAgeOver150(indArray);
 		for(int j=0;j<errorsOver150.size();j++){
@@ -444,9 +447,15 @@ public class gedcomParser {
 		}
 		//Priya Parmar - User Story 10 - Sprint 2
 		ArrayList<String> errorsMrgless14 = checkMarriageAfter14(famArray, indArray);
-		for(int j=0;j<errorsMrgless14.size();j++){
-			System.out.println(errorsMrgless14.get(j));
-		}
+		System.out.println(errorsMrgless14.get(3));
+		//Ruchika Sutariya - User Story 17 - Sprint 2
+		System.out.println(checkNoMarriageDescendent(indArray, famArray));
+		//Ruchika Sutariya - User Story 18 - Sprint 2
+		System.out.println(checkSiblingShouldnotMarry(indArray, famArray));
+		//Charmi Bhikadiya - User Story 19 - Sprint 2
+		checkCousinShouldNotMarry(indArray, famArray);
+		//Charmi Bhikadiya - User Story 28 - Sprint 2
+		System.out.println("US28: Order Siblings by Age for each family");
 		orderSiblingsByAge(famArray, indArray);
 	}
 	
@@ -700,8 +709,7 @@ public class gedcomParser {
 	}
 	
 	//Sprint 2 - Priya Parmar - US - 07 - Less then 150 years old
-	public static ArrayList<String> checkIfAgeOver150(ArrayList<indi> indArray){
-		
+	public static ArrayList<String> checkIfAgeOver150(ArrayList<indi> indArray){	
 		ArrayList<String> errors = new ArrayList<String>();
 		for (int j=0; j < indArray.size(); j++) {
             indi currentspot = indArray.get(j);
@@ -742,125 +750,168 @@ public class gedcomParser {
 	}
 	
 	//Sprint 2 - Ruchika Sutariya -US 18 - Siblings should not marry one another
-	public static void SiblingShouldnotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
-		
+	public static String checkSiblingShouldnotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error ="";
 		for(int i=0;i<famArray.size();i++){
 			ArrayList<String> children = famArray.get(i).getChildren();
-			
 			if(famArray.get(i).getChildren()!=null)
 			{
-				String familyID=famArray.get(i).getId();
-				
+				String familyID=famArray.get(i).getId();	
 				if(children.size()>=2)
 				{
-					indi husband = getIndividualById(famArray.get(i).getHusband(), indArray);
-					indi wife = getIndividualById(famArray.get(i).getWife(),indArray);
-					String mothername=wife.getName();
-					String fathername=husband.getName();
-					
-					
-				System.out.println(children+" are Siblings who has same mother" + mothername + "and father" + fathername + "so they should not marry with each other.");
-				
+					for(int j=0;j<children.size();j++){
+						indi currentChild = getIndividualById(children.get(j), indArray);
+						String name = currentChild.getName();
+						for(int k=0;k<famArray.size();k++){
+							String gethusband = getIndividualById(famArray.get(k).getHusband(), indArray).getName();
+							//String getwife = getIndividualById(famArray.get(k).getWife(), indArray).getName();
+							if(name.equals(gethusband)){
+								if(famArray.get(k).getWife()!=null){
+									String wife = getIndividualById(famArray.get(k).getWife(),indArray).getName();
+									for(int l=0;l<children.size();l++){
+										String currentName = getIndividualById(children.get(l), indArray).getName();
+										if(wife!=null){
+											if(wife.equals(currentName)){
+												error = "Error US18: FAMILY:"+familyID+" Sibblings shouldn't marry one another ("+famArray.get(k).getHusband()+")";
+												return error;
+											}
+										}
+									}
+								}
+								
+							}
+						}
+					}
 				}
-				else
-					System.out.println("There is only one child");
-				
 			}
 		}
+		return error;
 	}
 
 	//Sprint 2 - Ruchika Sutariya -US 17 - Parents should not marry any of their descendants
-public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
-	for(int i=0;i<famArray.size();i++)
-	{
-		
-		Date marriagedate1=famArray.get(i).getMarriage();
-		//System.out.println(marriagedate1);
-		
-		for(int j=i+1;j<famArray.size();j++)
-		{
-			Date marriagedate2=famArray.get(j).getMarriage();
-			//System.out.println(marriagedate2);
-			 if(marriagedate1!=null && marriagedate2!=null)
-			 if(marriagedate1.before(marriagedate2))
+	public static String checkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error = "";
+		for(int i=0;i<famArray.size();i++)
+		{ 		
+			 String familyID=famArray.get(i).getId();
+			 for(int j=0;j<indArray.size();j++)
 			 {
-				 String familyID1=famArray.get(j).getId();
-				 String familyID=famArray.get(i).getId();
-				 System.out.println(familyID+" should not marry to descendant"+familyID1);
-			 }
-			 
+				 String Child = indArray.get(j).getFamc();
+				 if(Child!=null){
+					 if(Child.equals(familyID))
+					 { 
+						 String indiID = indArray.get(j).getId();
+						 //System.out.println(familyID+"should not marry to descendent"+indiID);
+						 error = "Error US17: FAMILY:"+familyID+" Individual should not marry to descendent INDIVIDUAL:"+ indiID;
+						 return error;
+					 }
+				 }
+					 
+				  
+				  
+			 }					 
+		}
+		return error;
+	}
+	// Sprint 2 - Charmi Bhikadiya - US 19 - First Cousins should not marry
+	public static void checkCousinShouldNotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String lastName1="";
+		String lastName2="";
+		//System.out.println("These all are cousins of Same Family so should not be marry with each other.");
+		for(int i=0;i<indArray.size();i++){
+			String indiID=indArray.get(i).getId();
+				
+			//System.out.println(indArray.get(i).getId());
+			for(i=0;i<indArray.size();i++)
+			{
+				lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+				
+				for(int j=i+1;j<indArray.size();j++)
+				{
+					lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+					
+					if(lastName2.equals(lastName1))
+					{
+						
+						indiID=indArray.get(j).getId();
+						//System.out.println(indiID);
+					}
+					
+						
+				}
+				break;
+			}
+			//System.out.println("These all are cousins of Same Family so should not be marry with each other.");
 			
+					for(int j=i+1;j<indArray.size();j++)
+					{
+						//System.out.println(lastName1);
+						lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
+						//System.out.println(lastName2);
+						if(!lastName1.equals(lastName2))
+						{
+							indiID=indArray.get(j).getId();
+							//System.out.println(indiID);
+						}
+						
+					}
+					break;	
+			}
+		for(int i=0;i<famArray.size();i++)
+		{
+			String indiID1 = "";
+			String familyID = famArray.get(i).getId();
+			for(i=0;i<indArray.size();i++)
+			{
+				
+				String spouse=indArray.get(i).getFamsp();
+				if(familyID.equals(spouse))
+				{
+					indiID1=indArray.get(i).getId();
+					lastName1 = indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+				}
+				break;
+			}
+			
+			String indiID2="";
+			for(i=2;i<indArray.size();i++)
+			{
+				String spouse=indArray.get(i).getFamsp();
+				if(familyID.equals(spouse))
+				{
+					indiID2=indArray.get(i).getId();
+					lastName2 = indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
+				}
+				
+				
+			}
+			
+			if(lastName1.equals(lastName2))
+			{
+				System.out.println("Error US19:INDIVIDUAL: "+indiID1+" should not marry first cousins "+indiID2);
+			}
 		}
 		
 	}
-	
-}
-	// Sprint 2 - Charmi Bhikadiya - US 19 - First Cousins should not marry
-	public static void CousinShouldNotMarry(ArrayList<indi> indArray, ArrayList<fam> famArray){
-	String lastName1="";
-	String lastName2="";
-	System.out.println("These all are cousins of Same Family so should not be marry with each other.");
-	for(int i=0;i<indArray.size();i++){
-		String indiID=indArray.get(i).getId();
-		//lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
-		//System.out.println(indiID +" "+ lastName);	
-		System.out.println(indArray.get(i).getId());
-		for(i=0;i<indArray.size();i++)
-		{
-			lastName1=indArray.get(i).getName().substring(indArray.get(i).getName().indexOf("/")+1, indArray.get(i).getName().length()-2);
-			
-			for(int j=i+1;j<indArray.size();j++)
-			{
-				lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
-				
-				if(lastName2.equals(lastName1))
-				{
-					
-					indiID=indArray.get(j).getId();
-					System.out.println(indiID);
-				}
-				
-					
-			}
-			break;
-		}
-		System.out.println("These all are cousins of Same Family so should not be marry with each other.");
-		
-				for(int j=i+1;j<indArray.size();j++)
-				{
-					//System.out.println(lastName1);
-					lastName2=indArray.get(j).getName().substring(indArray.get(j).getName().indexOf("/")+1, indArray.get(j).getName().length()-2);
-					//System.out.println(lastName2);
-					if(!lastName1.equals(lastName2))
-					{
-						indiID=indArray.get(j).getId();
-						System.out.println(indiID);
-					}
-					
-				}
-				break;
-			
-		}
-	
-		
-}
 	
 	
 	//Sprint 2 - Charmi Bhikadiya - US 28 - Order Siblings by age
 	public static void orderSiblingsByAge(ArrayList<fam> famArray, ArrayList<indi> indArray){
 		
 		for(int i=0;i<famArray.size();i++){
-			ArrayList<indi> orderedSiblings = new ArrayList<>();
-			ArrayList<String> siblings = famArray.get(i).getChildren();
-			for(int j =0 ;j<siblings.size();j++){
-				orderedSiblings.add(getIndividualById(siblings.get(j), indArray));
-			}
-			gedcomParser ged = new gedcomParser();
-			Collections.sort(orderedSiblings,ged.new AgeComparator());
-			System.out.println("\nSiblings of family "+famArray.get(i).getId()+":");
-			for(int j=0;j<orderedSiblings.size();j++){
-				System.out.println(orderedSiblings.get(j).getName()+"has age "+orderedSiblings.get(j).getAge());
-			}
+			if(!famArray.get(i).getChildren().isEmpty() && famArray.get(i).getChildren().size()>=2){
+				ArrayList<indi> orderedSiblings = new ArrayList<>();
+				ArrayList<String> siblings = famArray.get(i).getChildren();
+				for(int j =0 ;j<siblings.size();j++){
+					orderedSiblings.add(getIndividualById(siblings.get(j), indArray));
+				}
+				gedcomParser ged = new gedcomParser();
+				Collections.sort(orderedSiblings,ged.new AgeComparator());
+				System.out.println("\nSiblings of family "+famArray.get(i).getId()+":");
+				for(int j=0;j<orderedSiblings.size();j++){
+					System.out.println(orderedSiblings.get(j).getName()+"has age "+orderedSiblings.get(j).getAge());
+				}
+			}		
 		}
 		
 	}
@@ -910,7 +961,17 @@ public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<f
 		}
 		return individual;
 	}
-
+	public static fam getFamilyById(String id, ArrayList<fam> famArray){
+		fam family = null;
+		for(int i=0;i<famArray.size();i++){
+			String famId = famArray.get(i).getId();
+			if(famId.equals(id)){
+				family = famArray.get(i);
+				break;
+			}
+		}
+		return family;
+	}
 	public static String getName(String id, ArrayList<indi> indArray){
 		String yourname = "";
 		for(int i=0; i<indArray.size(); i++){
@@ -929,7 +990,7 @@ public static void ChkNoMarriageDescendent(ArrayList<indi> indArray, ArrayList<f
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="C:\\Users\\parmarp\\Downloads\\My-Family-17-Mar-2017-227.ged";
+		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 2\\gedcomParser\\src\\gedcomParser\\sprint2.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
