@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-
-import gedcomParser.gedcomParser.AgeComparator;
 import gedcomParser.gedcomParser.fam;
 import gedcomParser.gedcomParser.indi;
 

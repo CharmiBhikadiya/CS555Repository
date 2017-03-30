@@ -12,9 +12,10 @@ import java.util.*;
 import java.text.*;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Calendar;
 
 import javax.swing.text.ChangedCharSetException;
+
+import gedcomParser.gedcomParser.indi;
 
 public class gedcomParser {
 	
@@ -459,6 +460,11 @@ public class gedcomParser {
 		//Charmi Bhikadiya - User Story 28 - Sprint 2
 		System.out.println("US28: Order Siblings by Age for each family");
 		s2.orderSiblingsByAge(famArray, indArray);
+		
+		System.out.println("Sprint 3:");
+		Sprint3 s3 = new Sprint3();
+		s3.listLivingMarried(indArray, famArray);
+		s3.listOrphans(indArray, famArray);
 	}
 	
 	
@@ -506,14 +512,40 @@ public class gedcomParser {
 		}
 		return yourname; 
 	}
-	
+	public static indi getIndividualById(String id, ArrayList<indi> indArray){
+		indi individual=null;
+		for(int i=0;i<indArray.size();i++){
+			String indiId = indArray.get(i).getId();
+			if(indiId.equals(id)){
+				individual = indArray.get(i);
+				break;
+			}
+		}
+		return individual;
+	}
+	public static ArrayList<Date> getBirthDeath(String id, ArrayList<indi> indArray){
+		ArrayList<Date> BirthDeath = new ArrayList<Date>();
+		Date yourdeath = null;
+		Date yourbirth = null;
+		for(int i=0; i<indArray.size(); i++){
+			indi currentspot = indArray.get(i);
+			String current_id = currentspot.getId();
+			if(current_id.equals(id)){
+				yourdeath= currentspot.getDeath(); 
+				yourbirth = currentspot.getBirth(); 
+			}
+		}
+		BirthDeath.add(yourbirth);
+		BirthDeath.add(yourdeath);
+		return BirthDeath; 
+	}
 	public static void main(String[] args) throws IOException{
 		ArrayList<indi> individualArray = new ArrayList<indi>();
 		ArrayList<fam> familyArray = new ArrayList<fam>();
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 2\\gedcomParser\\src\\gedcomParser\\sprint2.ged";
+		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\gedcomParser\\src\\gedcomParser\\sprint3.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
