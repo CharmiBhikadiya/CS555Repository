@@ -1,5 +1,0 @@
-call to user story
-Parser tree should not be  null
-Both Date should not be same because Person's Birthdate is always before Marriagedate.
- Marriagedate should not be null 
-Both date should be in proper format.
