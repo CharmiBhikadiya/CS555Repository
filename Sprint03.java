@@ -49,9 +49,48 @@ public class Sprint3 {
 	}
 	
 	//Sprint 3 - Ruchika Sutariya - User Story 39
-	public static void listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
-		
+	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error="";
+		for(int i=0;i<famArray.size();i++)
+		{
+			fam currentfamindex=famArray.get(i);
+			String currentfamilyID=famArray.get(i).getId();
+			if(currentfamindex.getMarriage()!=null)
+			{
+				
+					String husband=currentfamindex.getHusband();
+					String wife =currentfamindex.getWife();
+					Date deathhusband=indArray.get(i).getDeath();
+					if(deathhusband==null)
+						for(int j=0;j<indArray.size();j++)
+						{
+							String wifeid=indArray.get(j).getId();
+							if(wifeid.equals(wife))
+							{
+								Date deathwife=indArray.get(j).getDeath();
+									if(deathwife==null)
+									{	
+										Date now = new Date();
+										Calendar calendar = new GregorianCalendar(/* remember about timezone! */);
+										calendar.setTime(now);
+										calendar.add(Calendar.DATE, 30);
+										Date newdate = calendar.getTime();
+										System.out.println(newdate);
+				
+										Date marriagedate=currentfamindex.getMarriage();
+										calendar.setTime(marriagedate);
+										System.out.println(marriagedate);
+										long difference = Math.abs(marriagedate.getTime()-newdate.getTime()); 
+										System.out.println(difference);
+									}
+							}
+						}
+			}		
+		}
+		return error;
 	}
+	
+	
 	
 	
 	
