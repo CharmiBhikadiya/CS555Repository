@@ -431,12 +431,15 @@ public class gedcomParser {
 		System.out.println("Sprint 3:");
 		Sprint3 s3 = new Sprint3();
 		
+		//Ruchika Sutariya - User Story 34 - Sprint 2
+		System.out.println(s3.listLargeAgeDifferences(indArray, famArray));
+		//Ruchika Sutariya - User Story 39 - Sprint 2
+		s3.listUpcomingAnniversaries(indArray, famArray);
+		
 	}
 	
 	
 	
-	
-	//US 27
 	static int getIndiAge(String sDate) {
         SimpleDateFormat dt = new SimpleDateFormat("dd MMM yyyy"); 
 	    Date date; 
@@ -456,17 +459,8 @@ public class gedcomParser {
          catch (Exception ex) {}
         return 0;
     }
-	public static fam getFamilyById(String id, ArrayList<fam> famArray){
-		fam family = null;
-		for(int i=0;i<famArray.size();i++){
-			String famId = famArray.get(i).getId();
-			if(famId.equals(id)){
-				family = famArray.get(i);
-				break;
-			}
-		}
-		return family;
-	}
+	
+	
 	public static String getName(String id, ArrayList<indi> indArray){
 		String yourname = "";
 		for(int i=0; i<indArray.size(); i++){
@@ -478,40 +472,15 @@ public class gedcomParser {
 		}
 		return yourname; 
 	}
-	public static indi getIndividualById(String id, ArrayList<indi> indArray){
-		indi individual=null;
-		for(int i=0;i<indArray.size();i++){
-			String indiId = indArray.get(i).getId();
-			if(indiId.equals(id)){
-				individual = indArray.get(i);
-				break;
-			}
-		}
-		return individual;
-	}
-	public static ArrayList<Date> getBirthDeath(String id, ArrayList<indi> indArray){
-		ArrayList<Date> BirthDeath = new ArrayList<Date>();
-		Date yourdeath = null;
-		Date yourbirth = null;
-		for(int i=0; i<indArray.size(); i++){
-			indi currentspot = indArray.get(i);
-			String current_id = currentspot.getId();
-			if(current_id.equals(id)){
-				yourdeath= currentspot.getDeath(); 
-				yourbirth = currentspot.getBirth(); 
-			}
-		}
-		BirthDeath.add(yourbirth);
-		BirthDeath.add(yourdeath);
-		return BirthDeath; 
-	}
+	
+	
 	public static void main(String[] args) throws IOException{
 		ArrayList<indi> individualArray = new ArrayList<indi>();
 		ArrayList<fam> familyArray = new ArrayList<fam>();
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\gedcomParser\\src\\gedcomParser\\sprint3.ged";
+		String file ="C:\\Users\\Ruchika Sutariya\\Desktop\\Stevens Study\\Sem 2\\CS-555\\Projects\\sprint2.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
