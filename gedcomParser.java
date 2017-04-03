@@ -409,7 +409,22 @@ public class gedcomParser {
 		}
 		System.out.println("Sprint 1:");
 		Sprint1 s1 = new Sprint1();
+		//Priya Parmar - User Story 01 - Sprint 1 for individual
+		ArrayList<String> errorsIndividual = s1.checkIndiDateBeforeCurrentDate(indArray);
+		for(int j=0; j<errorsIndividual.size();j++){
+			System.out.println(errorsIndividual.get(j));
+		}
 		
+		//Priya Parmar - User Story 01 - Sprint 1 for family
+		ArrayList<String> errorsFamily = s1.checkFamMarriageBeforeDate(famArray);
+		for(int j=0;j<errorsFamily.size();j++){
+			System.out.println(errorsFamily.get(j));
+		}
+		//Priya Parmar - User Story 03 - Sprint 1
+		ArrayList<String> errorsIndiBirth = s1.checkBirthBeforeDeath(indArray);
+		for(int j=0;j<errorsIndiBirth.size();j++){
+			System.out.println(errorsIndiBirth.get(j));
+		}
 		//Ruchika Sutariya - User Story 02 - Sprint 1
 		ArrayList<String> errorsBirthBeforeMrg = s1.checkBirthBeforeMarriage(indArray, famArray);
 		System.out.println(errorsBirthBeforeMrg.get(0));
@@ -418,28 +433,47 @@ public class gedcomParser {
 		for(int j=0;j<errorsBirthBeforeDeathOfParents.size();j++){
 			System.out.println(errorsBirthBeforeDeathOfParents.get(j));
 		}
-		
+		//Charmi Bhikadiya -User Story 13 - Sprint 1
+		ArrayList<String> errorsSiblingSpacing = s1.compareSiblingSpacing(indArray,famArray);
+		System.out.println(errorsSiblingSpacing.get(0));
+		//Charmi Bhikadiya - User Story 16 - Sprint 1
+		ArrayList<String> errorsMaleNames = s1.checkMaleLastNames(indArray, famArray);
+		for(int j=0;j<errorsMaleNames.size();j++){
+			System.out.println(errorsMaleNames.get(j));
+		}
 		System.out.println("Sprint 2:");
 		Sprint2 s2 = new Sprint2();
-		
+		//Priya Parmar - User Story 07 - Sprint 2
+		ArrayList<String> errorsOver150 = s2.checkIfAgeOver150(indArray);
+		for(int j=0;j<errorsOver150.size();j++){
+			System.out.println(errorsOver150.get(j));
+		}
+		//Priya Parmar - User Story 10 - Sprint 2
+		ArrayList<String> errorsMrgless14 = s2.checkMarriageAfter14(famArray, indArray);
+		System.out.println(errorsMrgless14.get(3));
 		//Ruchika Sutariya - User Story 17 - Sprint 2
 		System.out.println(s2.checkNoMarriageDescendent(indArray, famArray));
 		//Ruchika Sutariya - User Story 18 - Sprint 2
 		System.out.println(s2.checkSiblingShouldnotMarry(indArray, famArray));
+		//Charmi Bhikadiya - User Story 19 - Sprint 2
+		s2.checkCousinShouldNotMarry(indArray, famArray);
+		//Charmi Bhikadiya - User Story 28 - Sprint 2
+		System.out.println("US28: Order Siblings by Age for each family");
+		s2.orderSiblingsByAge(famArray, indArray);
 		
-		
-		System.out.println("Sprint 3:");
+		System.out.println("\nSprint 3:");
 		Sprint3 s3 = new Sprint3();
-		
-		//Ruchika Sutariya - User Story 34 - Sprint 2
-		System.out.println(s3.listLargeAgeDifferences(indArray, famArray));
-		//Ruchika Sutariya - User Story 39 - Sprint 2
-		System.out.println(s3.listUpcomingAnniversaries(indArray, famArray));;
-		
+		System.out.println(s3.parentsNotTooOld(indArray, famArray));
+		System.out.println(s3.birthBeforeMarriageOfParents(indArray, famArray));
+		System.out.println(s3.listLargeAgeDifferences(indArray, famArray)); 
+		s3.listLivingMarried(indArray, famArray);
+		System.out.println(s3.listOrphans(indArray, famArray)); 
 	}
 	
 	
 	
+	
+	//US 27
 	static int getIndiAge(String sDate) {
         SimpleDateFormat dt = new SimpleDateFormat("dd MMM yyyy"); 
 	    Date date; 
@@ -459,8 +493,17 @@ public class gedcomParser {
          catch (Exception ex) {}
         return 0;
     }
-	
-	
+	public static fam getFamilyById(String id, ArrayList<fam> famArray){
+		fam family = null;
+		for(int i=0;i<famArray.size();i++){
+			String famId = famArray.get(i).getId();
+			if(famId.equals(id)){
+				family = famArray.get(i);
+				break;
+			}
+		}
+		return family;
+	}
 	public static String getName(String id, ArrayList<indi> indArray){
 		String yourname = "";
 		for(int i=0; i<indArray.size(); i++){
@@ -472,15 +515,41 @@ public class gedcomParser {
 		}
 		return yourname; 
 	}
-	
-	
+	public static indi getIndividualById(String id, ArrayList<indi> indArray){
+		indi individual=null;
+		for(int i=0;i<indArray.size();i++){
+			String indiId = indArray.get(i).getId();
+			if(indiId.equals(id)){
+				individual = indArray.get(i);
+				break;
+			}
+		}
+		return individual;
+	}
+	public static ArrayList<Date> getBirthDeath(String id, ArrayList<indi> indArray){
+		ArrayList<Date> BirthDeath = new ArrayList<Date>();
+		Date yourdeath = null;
+		Date yourbirth = null;
+		for(int i=0; i<indArray.size(); i++){
+			indi currentspot = indArray.get(i);
+			String current_id = currentspot.getId();
+			if(current_id.equals(id)){
+				yourdeath= currentspot.getDeath(); 
+				yourbirth = currentspot.getBirth(); 
+				break;
+			}
+		}
+		BirthDeath.add(yourbirth);
+		BirthDeath.add(yourdeath);
+		return BirthDeath; 
+	}
 	public static void main(String[] args) throws IOException{
 		ArrayList<indi> individualArray = new ArrayList<indi>();
 		ArrayList<fam> familyArray = new ArrayList<fam>();
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="C:\\Users\\Ruchika Sutariya\\Desktop\\Stevens Study\\Sem 2\\CS-555\\Projects\\sprint2.ged";
+		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\gedcomParser\\src\\gedcomParser\\sprint3-4.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
