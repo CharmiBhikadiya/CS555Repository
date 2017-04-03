@@ -434,7 +434,7 @@ public class gedcomParser {
 		//Ruchika Sutariya - User Story 34 - Sprint 2
 		System.out.println(s3.listLargeAgeDifferences(indArray, famArray));
 		//Ruchika Sutariya - User Story 39 - Sprint 2
-		s3.listUpcomingAnniversaries(indArray, famArray);
+		System.out.println(s3.listUpcomingAnniversaries(indArray, famArray));;
 		
 	}
 	
