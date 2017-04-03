@@ -50,8 +50,7 @@ public class Sprint3 {
 	}
 	
 	//Sprint 3 - Ruchika Sutariya - User Story 39
-	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
-		String error="";
+	public static void listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		for(int i=0;i<famArray.size();i++)
 		{
 			fam currentfamindex=famArray.get(i);
@@ -70,25 +69,33 @@ public class Sprint3 {
 							{
 								Date deathwife=indArray.get(j).getDeath();
 									if(deathwife==null)
-									{	
+									{		
+										
+										Calendar calendar = Calendar.getInstance();
 										Date now = new Date();
-										Calendar calendar = new GregorianCalendar(/* remember about timezone! */);
-										calendar.setTime(now);
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(now));
 										calendar.add(Calendar.DATE, 30);
-										Date newdate = calendar.getTime();
-										System.out.println(newdate);
-				
+										Date nextdate = calendar.getTime();
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(nextdate));
 										Date marriagedate=currentfamindex.getMarriage();
-										calendar.setTime(marriagedate);
-										System.out.println(marriagedate);
-										long difference = Math.abs(marriagedate.getTime()-newdate.getTime()); 
-										System.out.println(difference);
+										//System.out.println(marriagedate);
+										int marrmonth=marriagedate.getMonth();
+										int marrdate=marriagedate.getDate();	
+										calendar.clear();
+										calendar.set(2017, marrmonth, marrdate);
+										Date marriagedate1=calendar.getTime();	
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(marriagedate1));
+										if((marriagedate1.after(now)) &&(marriagedate1.before(nextdate)))
+										{
+											System.out.println(currentfamilyID);
+										}
+							
 									}
 							}
 						}
 			}		
 		}
-		return error;
+		
 	}
 	
 	
