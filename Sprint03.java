@@ -37,7 +37,7 @@ public class Sprint3 {
 							if((agewife>=(2*agehusband)) ||(agehusband>=(2*agewife)) )
 							{
 								
-								error = "US34: Family: "+currentfamilyID+" has largest difference, husband age is"+agehusband+" and wife age is"+agewife+"";
+								error = "Error US34: FAMILY:"+currentfamilyID+" has largest difference, husband age is"+agehusband+" and wife age is"+agewife+"";
 								break;
 							}
 						}
@@ -50,7 +50,8 @@ public class Sprint3 {
 	}
 	
 	//Sprint 3 - Ruchika Sutariya - User Story 39
-	public static void listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
+	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error="";
 		for(int i=0;i<famArray.size();i++)
 		{
 			fam currentfamindex=famArray.get(i);
@@ -87,7 +88,9 @@ public class Sprint3 {
 										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(marriagedate1));
 										if((marriagedate1.after(now)) &&(marriagedate1.before(nextdate)))
 										{
-											System.out.println(currentfamilyID);
+											//System.out.println(currentfamilyID);
+											error = "Error US39: FAMILY:"+currentfamilyID+" has upcoming marriage anniversary(In Next 30 Days).";
+											break;
 										}
 							
 									}
@@ -95,7 +98,7 @@ public class Sprint3 {
 						}
 			}		
 		}
-		
+		return error;
 	}
 	
 	
