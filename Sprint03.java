@@ -49,7 +49,6 @@ public class Sprint3 {
 		return error;
 	}
 	
-	//Sprint 3 - Ruchika Sutariya - User Story 39
 	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
 		for(int i=0;i<famArray.size();i++)
@@ -83,9 +82,9 @@ public class Sprint3 {
 										int marrmonth=marriagedate.getMonth();
 										int marrdate=marriagedate.getDate();	
 										calendar.clear();
-										calendar.set(2017, marrmonth, marrdate);
+										int year = Calendar.getInstance().get(Calendar.YEAR);
+										calendar.set(year, marrmonth, marrdate);
 										Date marriagedate1=calendar.getTime();	
-										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(marriagedate1));
 										if((marriagedate1.after(now)) &&(marriagedate1.before(nextdate)))
 										{
 											//System.out.println(currentfamilyID);
@@ -100,6 +99,7 @@ public class Sprint3 {
 		}
 		return error;
 	}
+	
 	
 	
 	
