@@ -463,10 +463,17 @@ public class gedcomParser {
 		
 		System.out.println("\nSprint 3:");
 		Sprint3 s3 = new Sprint3();
+		//Priya Parmar - User Story 12 - Sprint 3 
 		System.out.println(s3.parentsNotTooOld(indArray, famArray));
+		//Priya Parmar - User Story 8 - Sprint 3
 		System.out.println(s3.birthBeforeMarriageOfParents(indArray, famArray));
-		System.out.println(s3.listLargeAgeDifferences(indArray, famArray)); 
+		//Ruchika Sutariya - User Story 34 - Sprint 3
+		System.out.println(s3.listLargeAgeDifferences(indArray, famArray));
+		//Ruchika Sutariya - User Story 39 - Sprint 3
+		System.out.println(s3.listUpcomingAnniversaries(indArray, famArray));
+		//Charmi Bhikadiya - User Story 30 - Sprint 3
 		s3.listLivingMarried(indArray, famArray);
+		//Charmi Bhikadiya - User Story 33 - Sprint 3
 		System.out.println(s3.listOrphans(indArray, famArray)); 
 	}
 	
@@ -549,9 +556,10 @@ public class gedcomParser {
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\gedcomParser\\src\\gedcomParser\\sprint3-4.ged";
+		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\lol\\src\\gedcomParser\\sprint3-4.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
 	}
 }
+

@@ -2,6 +2,7 @@ package gedcomParser;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import gedcomParser.gedcomParser.fam;
@@ -97,8 +98,55 @@ public class Sprint3 {
 	}
 	
 	//Sprint 3 - Ruchika Sutariya - User Story 39
-	public static void listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
-		
+	public String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
+		String error="";
+		for(int i=0;i<famArray.size();i++)
+		{
+			fam currentfamindex=famArray.get(i);
+			String currentfamilyID=famArray.get(i).getId();
+			if(currentfamindex.getMarriage()!=null)
+			{
+				
+					String husband=currentfamindex.getHusband();
+					String wife =currentfamindex.getWife();
+					Date deathhusband=indArray.get(i).getDeath();
+					if(deathhusband==null)
+						for(int j=0;j<indArray.size();j++)
+						{
+							String wifeid=indArray.get(j).getId();
+							if(wifeid.equals(wife))
+							{
+								Date deathwife=indArray.get(j).getDeath();
+									if(deathwife==null)
+									{		
+										
+										Calendar calendar = Calendar.getInstance();
+										Date now = new Date();
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(now));
+										calendar.add(Calendar.DATE, 30);
+										Date nextdate = calendar.getTime();
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(nextdate));
+										Date marriagedate=currentfamindex.getMarriage();
+										//System.out.println(marriagedate);
+										int marrmonth=marriagedate.getMonth();
+										int marrdate=marriagedate.getDate();	
+										calendar.clear();
+										int year = Calendar.getInstance().get(Calendar.YEAR);
+										calendar.set(year, marrmonth, marrdate);
+										Date marriagedate1=calendar.getTime();	
+										if((marriagedate1.after(now)) &&(marriagedate1.before(nextdate)))
+										{
+											//System.out.println(currentfamilyID);
+											error = "US39: FAMILY:"+currentfamilyID+" has upcoming marriage anniversary(In Next 30 Days).";
+											break;
+										}
+							
+									}
+							}
+						}
+			}		
+		}
+		return error;
 	}
 	
 	//Sprint 3 - Charmi Bhikadiya - User Story 30
