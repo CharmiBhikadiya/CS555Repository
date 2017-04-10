@@ -460,6 +460,32 @@ public class gedcomParser {
 		//Charmi Bhikadiya - User Story 28 - Sprint 2
 		System.out.println("US28: Order Siblings by Age for each family");
 		s2.orderSiblingsByAge(famArray, indArray);
+		
+		System.out.println("\nSprint 3:");
+		Sprint3 s3 = new Sprint3();
+		//Priya Parmar - User Story 12 - Sprint 3 
+		System.out.println(s3.parentsNotTooOld(indArray, famArray));
+		//Priya Parmar - User Story 8 - Sprint 3
+		System.out.println(s3.birthBeforeMarriageOfParents(indArray, famArray));
+		//Ruchika Sutariya - User Story 34 - Sprint 3
+		System.out.println(s3.listLargeAgeDifferences(indArray, famArray));
+		//Ruchika Sutariya - User Story 39 - Sprint 3
+		System.out.println(s3.listUpcomingAnniversaries(indArray, famArray));
+		//Charmi Bhikadiya - User Story 30 - Sprint 3
+		s3.listLivingMarried(indArray, famArray);
+		//Charmi Bhikadiya - User Story 33 - Sprint 3
+		System.out.println(s3.listOrphans(indArray, famArray)); 
+		
+		System.out.println("\nSprint 4:");
+		Sprint4 s4 = new Sprint4();
+		for(int i=0;i<indArray.size();i++){
+			indi current = indArray.get(i);
+			s4.checkUniqueIndiId(current, indArray);
+		}
+		for(int i=0;i<famArray.size();i++){
+			fam current = famArray.get(i);
+			s4.checkUniqueFamId(current, famArray);
+		}
 	}
 	
 	
@@ -518,14 +544,33 @@ public class gedcomParser {
 		}
 		return individual;
 	}
-	
+	public static ArrayList<Date> getBirthDeath(String id, ArrayList<indi> indArray){
+		ArrayList<Date> BirthDeath = new ArrayList<Date>();
+		Date yourdeath = null;
+		Date yourbirth = null;
+		for(int i=0; i<indArray.size(); i++){
+			indi currentspot = indArray.get(i);
+			String current_id = currentspot.getId();
+			if(current_id.equals(id)){
+				yourdeath= currentspot.getDeath(); 
+				yourbirth = currentspot.getBirth(); 
+				break;
+			}
+		}
+		BirthDeath.add(yourbirth);
+		BirthDeath.add(yourdeath);
+		return BirthDeath; 
+	}
+	public static int getLineNumber() {
+	    return Thread.currentThread().getStackTrace()[2].getLineNumber();
+	}
 	public static void main(String[] args) throws IOException{
 		ArrayList<indi> individualArray = new ArrayList<indi>();
 		ArrayList<fam> familyArray = new ArrayList<fam>();
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter the gedcom file path with '\\' you wish evaluate: ");
 		//String file = in.nextLine();
-		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\gedcomParser\\src\\gedcomParser\\sprint3.ged";
+		String file ="D:\\Stevens\\Semester 3\\Agile\\Sprint 3\\lol\\src\\gedcomParser\\sprint3-4.ged";
 		in.close();
 		parseFile(file, individualArray, familyArray);
 		printIndiAndFamData(individualArray, familyArray);
