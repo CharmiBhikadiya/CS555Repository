@@ -10,9 +10,10 @@ import gedcomParser.gedcomParser.indi;
 
 public class Sprint3 {
 
-	//Sprint 3 - Ruchika Sutariya - User Story 34 : List Large age difference
+	//Sprint 3 - Ruchika Sutariya - User Story 34
 	public static String  listLargeAgeDifferences(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
+		ArrayList<fam> finalList = new ArrayList<>();
 		for(int i=0;i<famArray.size();i++)
 		{
 			fam currentfamindex=famArray.get(i);
@@ -36,7 +37,7 @@ public class Sprint3 {
 							//System.out.println(agewife);
 							if((agewife>=(2*agehusband)) ||(agehusband>=(2*agewife)) )
 							{
-								
+								finalList.add(currentfamindex);
 								error = "Error US34: FAMILY:"+currentfamilyID+" has largest difference, husband age is"+agehusband+" and wife age is"+agewife+"";
 								break;
 							}
@@ -45,13 +46,22 @@ public class Sprint3 {
 					}
 					
 				}
+			
+		}
+		System.out.println("List out Famility ID that has Largest Age Difference");
+		for(int i=0;i<finalList.size();i++){
+			System.out.println(finalList.get(i).getId());
 		}
 		return error;
+		
+		
+		
 	}
 	
-	//Sprint 3 - Ruchika Sutariya - User Story 39 : List upcoming anniversaries
+	//Sprint 3 - Ruchika Sutariya - User Story 39
 	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
+		ArrayList<fam> finalList = new ArrayList<>();
 		for(int i=0;i<famArray.size();i++)
 		{
 			fam currentfamindex=famArray.get(i);
@@ -84,11 +94,15 @@ public class Sprint3 {
 										int marrdate=marriagedate.getDate();	
 										calendar.clear();
 										int year = Calendar.getInstance().get(Calendar.YEAR);
+									
 										calendar.set(year, marrmonth, marrdate);
 										Date marriagedate1=calendar.getTime();	
+									//	System.out.println(marriagedate1);
+										//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(marriagedate1));
 										if((marriagedate1.after(now)) &&(marriagedate1.before(nextdate)))
 										{
 											//System.out.println(currentfamilyID);
+											finalList.add(currentfamindex);
 											error = "Error US39: FAMILY:"+currentfamilyID+" has upcoming marriage anniversary(In Next 30 Days).";
 											break;
 										}
@@ -98,9 +112,12 @@ public class Sprint3 {
 						}
 			}		
 		}
+		System.out.println("List out Famility ID that has Upcoming Anniversary.");
+		for(int i=0;i<finalList.size();i++){
+			System.out.println(finalList.get(i).getId());
+		}
 		return error;
 	}
-	
 	
 	
 	
