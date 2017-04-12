@@ -10,7 +10,7 @@ import gedcomParser.gedcomParser.indi;
 
 public class Sprint3 {
 
-	//Sprint 3 - Ruchika Sutariya - User Story 34
+	//Sprint 3 - Ruchika Sutariya - User Story 34 : List Large age difference
 	public static String  listLargeAgeDifferences(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
 		for(int i=0;i<famArray.size();i++)
@@ -49,6 +49,7 @@ public class Sprint3 {
 		return error;
 	}
 	
+	//Sprint 3 - Ruchika Sutariya - User Story 39 : List upcoming anniversaries
 	public static String listUpcomingAnniversaries(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
 		for(int i=0;i<famArray.size();i++)
