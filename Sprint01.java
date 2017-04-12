@@ -39,7 +39,7 @@ public class Sprint1 {
 			
 			return errors;
 		}
-		//Sprint 1 - Ruchika Sutariya - User Story 09 
+		//Sprint 1 - Ruchika Sutariya - User Story 09 :Birth after death of parents
 		@SuppressWarnings("deprecation")
 		public static ArrayList<String> checkBirthBeforeDeathofParents(ArrayList<indi> indArray, ArrayList<fam> famArray){
 			ArrayList<String> errors = new ArrayList<String>();
