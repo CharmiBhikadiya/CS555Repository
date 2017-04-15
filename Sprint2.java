@@ -9,6 +9,7 @@ import gedcomParser.gedcomParser.fam;
 import gedcomParser.gedcomParser.indi;
 
 public class Sprint2 {
+	static Sprint4 s4= new Sprint4();
 	//Sprint 2 - Priya Parmar - US - 07 - Less then 150 years old
 		public static ArrayList<String> checkIfAgeOver150(ArrayList<indi> indArray){	
 			ArrayList<String> errors = new ArrayList<String>();
@@ -17,7 +18,7 @@ public class Sprint2 {
 	            int age = currentspot.getAge();
 	            //System.out.println(age);
 	            if (age > 150){
-	            	errors.add("Error US07: INDIVIDUAL: " + currentspot.getId() + " has an age " + age + " over 150!") ;
+	            	errors.add("Error US07: INDIVIDUAL: " + currentspot.getId() + " has an age " + age + " over 150! : Line: "+s4.getLineNumber()) ;
 	             }
 			}
 			return errors;
@@ -39,10 +40,10 @@ public class Sprint2 {
 					int husbandAge = getAgeWhenMarried(husband.getBirth(),famArray.get(i).getMarriage());
 					
 					if(husbandAge<14){
-						errors.add("Error US10: INDIVIDUAL: " + husband.getId() + " was an age " + husbandAge + " when he got married which is less than 14!");
+						errors.add("Error US10: INDIVIDUAL: " + husband.getId() + " was an age " + husbandAge + " when he got married which is less than 14! : Line: "+s4.getLineNumber());
 					}
 					if(wifeAge<14 && wife!=null){ 
-						errors.add("Error US10: INDIVIDUAL: " + wife.getId() + " was an age " + wifeAge + " when she got married which is less than 14!");
+						errors.add("Error US10: INDIVIDUAL: " + wife.getId() + " was an age " + wifeAge + " when she got married which is less than 14! : Line: "+s4.getLineNumber());
 					}
 				}
 				
@@ -73,7 +74,7 @@ public class Sprint2 {
 											String currentName = getIndividualById(children.get(l), indArray).getName();
 											if(wife!=null){
 												if(wife.equals(currentName)){
-													error = "Error US18: FAMILY:"+familyID+" Sibblings shouldn't marry one another ("+famArray.get(k).getHusband()+")";
+													error = "Error US18: FAMILY:"+familyID+" Sibblings shouldn't marry one another ("+famArray.get(k).getHusband()+") : Line: "+s4.getLineNumber();
 													return error;
 												}
 											}
@@ -103,7 +104,7 @@ public class Sprint2 {
 						 { 
 							 String indiID = indArray.get(j).getId();
 							 //System.out.println(familyID+"should not marry to descendent"+indiID);
-							 error = "Error US17: FAMILY:"+familyID+" Individual should not marry to descendent INDIVIDUAL:"+ indiID;
+							 error = "Error US17: FAMILY:"+familyID+" Individual should not marry to descendent INDIVIDUAL:"+ indiID +" : Line: "+s4.getLineNumber();
 							 return error;
 						 }
 					 }
@@ -189,7 +190,7 @@ public class Sprint2 {
 				
 				if(lastName1.equals(lastName2))
 				{
-					System.out.println("Error US19:INDIVIDUAL: "+indiID1+" should not marry first cousins "+indiID2);
+					System.out.println("Error US19:INDIVIDUAL: "+indiID1+" should not marry first cousins "+indiID2+" : Line : "+s4.getLineNumber());
 				}
 			}
 			

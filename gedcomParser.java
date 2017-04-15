@@ -475,13 +475,30 @@ public class gedcomParser {
 		s3.listLivingMarried(indArray, famArray);
 		//Charmi Bhikadiya - User Story 33 - Sprint 3
 		System.out.println(s3.listOrphans(indArray, famArray)); 
+		
+		System.out.println("\nSprint 4:");
+		Sprint4 s4 = new Sprint4();
+		//Priya Parmar - User Story 22 - Sprint 4
+		indi current = indArray.get(0);
+		s4.checkUniqueIndiId(current,indArray);
+		fam f = famArray.get(1);
+		s4.checkUniqueFamId(f, famArray);
+		//Priya Parmar - User Story 25 - Sprint 4 
+		System.out.println(s4.checkUniqueChildren(indArray, f));
+		//Ruchika Sutariya - User Story 29 - Sprint 4
+		s4.listdeceased(indArray, famArray);
+		//Ruchika Sutariya - User Story 35 - Sprint 4
+		s4.listrecentbirths(indArray, famArray);
+		//Charmi Bhikadiya - User Story 40 - Sprint 4
+		//line numbers added to all errors
+		System.out.println("US 40: Line numbers added for reporting errors : Line: "+s4.getLineNumber());
+		//Charmi Bhikadiya - User Story 27 - Sprint 4
+		System.out.println("US 27: Individual Ages included in the table");
+		// ages included in the table
 	}
 	
-	
-	
-	
 	//US 27
-	static int getIndiAge(String sDate) {
+	public static int getIndiAge(String sDate) {
         SimpleDateFormat dt = new SimpleDateFormat("dd MMM yyyy"); 
 	    Date date; 
 	    try{

@@ -10,6 +10,7 @@ import gedcomParser.gedcomParser.indi;
 //import gedcomParser.indi;
 
 public class Sprint1 {
+	static Sprint4 s4 = new Sprint4();
 	//Sprint 1 - Priya Parmar - User Story 01
 		public static ArrayList<String> checkIndiDateBeforeCurrentDate(ArrayList<indi> indArray){
 			SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -21,11 +22,11 @@ public class Sprint1 {
 	            Date currentDate = new Date();
 				  if( birth != null && currentDate.before(birth)){
 	            	
-	            	errors.add("Error US01: INDIVIDUAL: " + currentspot.getId()+ " has a birth date " + dateFormat.format(birth) + " before " + dateFormat.format(currentDate)) ;
+	            	errors.add("Error US01: INDIVIDUAL: " + currentspot.getId()+ " has a birth date " + dateFormat.format(birth) + " before " + dateFormat.format(currentDate)+" : Line : "+s4.getLineNumber());
 	            }
 				  else if(death != null && currentDate.before(death)){
 					  
-		            	errors.add("Error US01: INDIVIDUAL: " + currentspot.getId()+ " has a death date " + dateFormat.format(death) + " before " + dateFormat.format(currentDate)) ;
+		            	errors.add("Error US01: INDIVIDUAL: " + currentspot.getId()+ " has a death date " + dateFormat.format(death) + " before " + dateFormat.format(currentDate)+" : Line : "+s4.getLineNumber()) ;
 		            }
 		            
 	        }
@@ -43,12 +44,12 @@ public class Sprint1 {
 		         Date currentDate = new Date();
 					  if(marriage != null && currentDate.before(marriage)){
 		         	
-						  errors.add("Error US01: FAMILY: " + currentFam.getId()+ " has a marriage date "+ dateFormat.format(marriage) + " before " + dateFormat.format(currentDate)) ;
+						  errors.add("Error US01: FAMILY: " + currentFam.getId()+ " has a marriage date "+ dateFormat.format(marriage) + " before " + dateFormat.format(currentDate)+" : Line : "+s4.getLineNumber()) ;
 						 
 					  	}
 					  else if( divorce != null && currentDate.before(divorce)){
 				         	
-				         	errors.add("Error US01: FAMILY: " + currentFam.getId()+ " has a divorce date "+ dateFormat.format(divorce) + " before " + dateFormat.format(currentDate));
+				         	errors.add("Error US01: FAMILY: " + currentFam.getId()+ " has a divorce date "+ dateFormat.format(divorce) + " before " + dateFormat.format(currentDate)+" : Line : "+s4.getLineNumber());
 				         	    	
 					  }			  
 			}
@@ -67,7 +68,7 @@ public class Sprint1 {
 	            if(death != null && birth != null && death.before(birth)){
 	            	//System.out.println("Error US03: INDIVIDUAL: " + currentspot.getId()
 	            	//+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth));
-	            	errors.add("Error US03: INDIVIDUAL: " + currentspot.getId()+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth)) ;
+	            	errors.add("Error US03: INDIVIDUAL: " + currentspot.getId()+ " died on " + dateFormat.format(death) + " before birth on " + dateFormat.format(birth)+" : Line : "+s4.getLineNumber()) ;
 	            }
 	        }
 			return errors;
@@ -87,12 +88,12 @@ public class Sprint1 {
 				if(hbirth != null && marriage != null && hbirth.after(marriage)){
 					errors.add("Error US02: FAMILY: " + currentfam.getId() 
 					+ ": Married " + dateFormat.format(marriage)
-		        	+ " before husband's("+husband+") birth on " + dateFormat.format(hbirth)+"\n");
+		        	+ " before husband's("+husband+") birth on " + dateFormat.format(hbirth)+" : Line : "+s4.getLineNumber()+"\n");
 				}
 				if(wbirth != null && marriage != null && wbirth.after(marriage)){
 					errors.add("Error US02: FAMILY: " + currentfam.getId() 
 					+ ": Married " + dateFormat.format(marriage)
-		        	+ " before wife's("+wife+") birth on " + dateFormat.format(wbirth));
+		        	+ " before wife's("+wife+") birth on " + dateFormat.format(wbirth)+" : Line : "+s4.getLineNumber());
 				}
 			}
 			
@@ -123,11 +124,11 @@ public class Sprint1 {
 					Date currentChildBirth = getBirthDeath(currentChildId, indArray).get(0);
 					if(fatherDeath!=null){
 						if(currentChildBirth.after(deathMinusNineMonths)){
-							errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is before nine months after death of father");
+							errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is before nine months after death of father : Line : "+s4.getLineNumber());
 						}
 					}else if(motherDeath!=null){
 						if(currentChildBirth.after(motherDeath)){
-							errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is after death of mother");
+							errors.add("Error US 09 : FAMILY: Birthdate of child is "+currentChildBirth+" which is after death of mother : Line : "+s4.getLineNumber());
 						}
 					}else{
 						continue;
@@ -169,7 +170,7 @@ public class Sprint1 {
 							String indiLName = indiName.substring(indiName.indexOf("/")+1,indiName.length()-2);
 							if(!lastName.equals(indiLName)
 									&& indArray.get(k).getSex().equals("M")){
-								errors.add("Error US16: FAMILY:"+famArray.get(i).getId()+" INDIVIDUAL:"+ indArray.get(k).getId()+"The last name of all male members should be "+lastName);
+								errors.add("Error US16: FAMILY:"+famArray.get(i).getId()+" INDIVIDUAL:"+ indArray.get(k).getId()+"The last name of all male members should be "+lastName+" : Line : "+s4.getLineNumber());
 							}
 						}
 					}
@@ -234,7 +235,7 @@ public class Sprint1 {
 			            	//errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays more than 2 days apart");		            
 			            	}
 			            if (diffMonths < 9 && sibling1.getId() != sibling2.getId()){
-			            	errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays less than 9 months apart");		            }
+			            	errors.add("Error US13: Sibling " + sibling1.getId() + " and " + sibling2.getId() + " have birthdays less than 9 months apart : Line : "+s4.getLineNumber());		            }
 				}
 			}
 			

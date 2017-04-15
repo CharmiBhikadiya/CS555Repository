@@ -9,6 +9,7 @@ import gedcomParser.gedcomParser.fam;
 import gedcomParser.gedcomParser.indi;
 
 public class Sprint3 {
+	static Sprint4 s4 = new Sprint4();
 	//Sprint 3 - Priya Parmar - User Story 12
 	public static String parentsNotTooOld(ArrayList<indi> indArray, ArrayList<fam> famArray){
 		String error="";
@@ -24,10 +25,10 @@ public class Sprint3 {
 					indi child = new gedcomParser().getIndividualById(children.get(j), indArray);
 					int childAge = child.getAge();
 					if(motherAge-childAge>60){
-						error = "US12: INDIVIDUAL: "+mother.getId()+" Mother is too old";
+						error = "Error US12: INDIVIDUAL: "+mother.getId()+" Mother is too old: Line: "+s4.getLineNumber();
 						break;
 					}else if(fatherAge-childAge>80){
-						error = "US12: INDIVIDUAL: "+father.getId()+" Father is too old";
+						error = "Error US12: INDIVIDUAL: "+father.getId()+" Father is too old: Line: "+s4.getLineNumber();
 						break;
 					}
 				}
@@ -48,7 +49,7 @@ public class Sprint3 {
 					Date birthDate = child.getBirth();
 					if(birthDate!= null){
 						if(birthDate.before(mrgDate)){
-							error = "US08: INDIVIDUAL: "+child.getId()+" has birth date before marriage of parents";
+							error = "Error US08: INDIVIDUAL: "+child.getId()+" has birth date before marriage of parents: Line: "+s4.getLineNumber();
 							break;
 						}
 					}			
