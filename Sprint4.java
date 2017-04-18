@@ -1,4 +1,13 @@
+package gedcomParser;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Date;
+
+import gedcomParser.gedcomParser.fam;
+import gedcomParser.gedcomParser.indi;
+
+public class Sprint4 {
 
 
 //Sprint 4 - Charmi Bhikadiya - User Story 40: Include input line numbers
@@ -25,3 +34,4 @@
          catch (Exception ex) {}
         return 0;
     }
+}
