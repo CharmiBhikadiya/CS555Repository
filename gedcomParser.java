@@ -434,6 +434,13 @@ public class gedcomParser {
 		System.out.println(s3.listLargeAgeDifferences(indArray, famArray)); 
 		s3.listLivingMarried(indArray, famArray);
 		System.out.println(s3.listOrphans(indArray, famArray)); 
+		
+		//Charmi Bhikadiya - User Story 40 - Sprint 4
+		//line numbers added to all errors
+		System.out.println("US 40: Line numbers added for reporting errors : Line: "+s4.getLineNumber());
+		//Charmi Bhikadiya - User Story 27 - Sprint 4
+		System.out.println("US 27: Individual Ages included in the table");
+		// ages included in the table
 	}
 	
 	
